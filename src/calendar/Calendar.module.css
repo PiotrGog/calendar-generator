@@ -1,0 +1,18 @@
+.calendarMain {
+    border: red 2px solid;
+}
+
+.calendarContainer {
+    border: red 2px solid;
+    display: grid;
+    gap: 5px 5px;
+    grid-template-columns: 10% 10% 10% 10% 10% 10% 10%;
+}
+
+.dayCard {
+    border: rgb(55, 0, 255) 2px solid;
+    background-color: aqua;
+    font-size: 30px;
+    font-weight: 600;
+    text-align: center;
+}

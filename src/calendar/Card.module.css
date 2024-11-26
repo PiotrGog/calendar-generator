@@ -1,0 +1,23 @@
+.cardContainer {
+    border: rgb(0, 0, 0) 2px solid;
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.cardDate {
+    border: rgb(21, 255, 0) 2px solid;
+    margin: 10px;
+    font-size: 25px;
+    font-weight: 600;
+    width: fit-content;
+}
+
+.cardLetter {
+    border: rgb(55, 0, 255) 2px solid;
+    font-size: 75px;
+    margin: auto;
+    text-align: center;
+    text-transform: capitalize;
+    width: 50%;
+}
