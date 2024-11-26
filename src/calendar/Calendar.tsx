@@ -37,11 +37,12 @@ class Calendar extends React.Component<{}, CalendarState> {
 
     private elementRef = React.createRef<HTMLDivElement>();
     private month: number = 0;
+    private year: number = 2024;
 
     constructor(props: any) {
         super(props);
         this.state = {
-            days: this.prepareDaysForCurrentMonth(),
+            days: this.prepareDaysForCurrentMonth()
         };
     }
 
@@ -53,15 +54,25 @@ class Calendar extends React.Component<{}, CalendarState> {
         });
     }
 
+    onYearUpdate(e: any) {
+        if (e.target.value.length !== 4) {
+            return;
+        }
+        this.year = +e.target.value;
+        this.setState({
+            days: this.prepareDaysForCurrentMonth()
+        });
+    }
+
     prepareDaysForCurrentMonth() {
         let days = []
-        for (let d = new Date(2024, this.month, 1); d.getMonth() === this.month; d.setDate(d.getDate() + 1)) {
+        for (let d = new Date(this.year, this.month, 1); d.getMonth() === this.month; d.setDate(d.getDate() + 1)) {
             days.push(new Date(d));
         }
         return days;
     }
 
-    save() {
+    generateImage() {
         toPng(this.elementRef.current as HTMLElement, { cacheBust: false })
             .then((dataUrl) => {
                 const link = document.createElement("a");
@@ -96,7 +107,8 @@ class Calendar extends React.Component<{}, CalendarState> {
                             <option value={i} key={i}>{x}</option>
                         )}
                     </select>
-                    <button className={styles.generateButton} onClick={this.save.bind(this)}>Generuj</button>
+                    <input className={styles.generateButton} type='number' maxLength={4} placeholder='YYYY' min={1900} onChange={this.onYearUpdate.bind(this)} />
+                    <button className={styles.generateButton} onClick={this.generateImage.bind(this)}>Generuj</button>
                 </div>
             </div>
         )
