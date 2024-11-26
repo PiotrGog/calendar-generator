@@ -1,12 +1,18 @@
 .calendarMain {
     border: red 2px solid;
+    background-color: white;
+}
+
+.calendarHeader {
+    font-size: 150px;
 }
 
 .calendarContainer {
+    background-color: white;
     border: red 2px solid;
     display: grid;
     gap: 5px 5px;
-    grid-template-columns: 10% 10% 10% 10% 10% 10% 10%;
+    grid-template-columns: 13% 13% 13% 13% 13% 13% 13%;
 }
 
 .dayCard {
@@ -15,4 +21,19 @@
     font-size: 30px;
     font-weight: 600;
     text-align: center;
+}
+
+.userPanel {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    margin-top: 20px;
+}
+
+.generateButton {
+    font-size: 50px;
+}
+
+.monthSelector {
+    font-size: 50px;
 }
