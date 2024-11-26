@@ -6,7 +6,6 @@
 }
 
 .cardDate {
-    border: rgb(21, 255, 0) 2px solid;
     margin: 10px;
     font-size: 25px;
     font-weight: 600;
@@ -14,10 +13,14 @@
 }
 
 .cardLetter {
-    border: rgb(55, 0, 255) 2px solid;
+    border: transparent solid 2px;
     font-size: 75px;
     margin: auto;
     text-align: center;
     text-transform: capitalize;
     width: 50%;
+}
+
+.cardLetter:hover {
+    border: red solid 2px;
 }

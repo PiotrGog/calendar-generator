@@ -89,7 +89,10 @@ class Calendar extends React.Component<{}, CalendarState> {
         return (
             <div>
                 <div ref={this.elementRef} className={styles.calendarMain}>
-                    <div className={styles.calendarHeader}>{Calendar.MONTHS[this.month]}</div>
+                    <div className={styles.calendarHeader}>
+                        <div>{Calendar.MONTHS[this.month]}</div>
+                        <textarea className={styles.textareaLegend} cols={50} rows={4}></textarea>
+                    </div>
                     <div className={styles.calendarContainer}>
                         {Calendar.DAYS.map(d =>
                             <div className={styles.dayCard} key={`${d}`}>{d}</div>
