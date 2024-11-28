@@ -85,6 +85,24 @@ class Calendar extends React.Component<{}, CalendarState> {
             });
     }
 
+    generateHeader() {
+        return (<>
+            {Calendar.DAYS.map(d => <div className={styles.dayCard} key={`${d}`}>{d}</div>)}
+        </>)
+    }
+
+    generatePreviousMonthEmptyCards() {
+        return (<>
+            {[...Array(this.state.days[0].getDay())].map((x, i) => <EmptyCard key={i} />)}
+        </>)
+    }
+
+    generateCards() {
+        return (<>
+            {this.state.days.map(d => <Card key={`${d}`} date={d} />)}
+        </>)
+    }
+
     render() {
         return (
             <div>
@@ -94,14 +112,9 @@ class Calendar extends React.Component<{}, CalendarState> {
                         <textarea className={styles.textareaLegend} cols={50} rows={4}></textarea>
                     </div>
                     <div className={styles.calendarContainer}>
-                        {Calendar.DAYS.map(d =>
-                            <div className={styles.dayCard} key={`${d}`}>{d}</div>
-                        )}
-                        {[...Array(this.state.days[0].getDay())].map((x, i) => <EmptyCard key={i} />
-                        )}
-                        {this.state.days.map(d => {
-                            return <Card key={`${d}`} date={d} />
-                        })}
+                        {this.generateHeader()}
+                        {this.generatePreviousMonthEmptyCards()}
+                        {this.generateCards()}
                     </div>
                 </div>
                 <div className={styles.userPanel}>
