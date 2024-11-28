@@ -7,9 +7,16 @@ type CardProps = {
 }
 
 class Card extends React.Component<CardProps, {}> {
+    private setBackground() {
+        if (this.props.date.getDay() === 0 || this.props.date.getDay() === 6) {
+            return { backgroundColor: '#CCC' }
+        }
+        return {}
+    }
+
     render() {
         return (
-            <div className={styles.cardContainer}>
+            <div style={this.setBackground()} className={styles.cardContainer}>
                 <div className={styles.cardDate}>
                     {this.props.date.getDate()}
                 </div>

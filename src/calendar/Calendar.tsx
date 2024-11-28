@@ -46,7 +46,7 @@ class Calendar extends React.Component<{}, CalendarState> {
         };
     }
 
-    monthChange(e: any) {
+    private monthChange(e: any) {
         this.month = +e.target.value;
 
         this.setState({
@@ -54,7 +54,7 @@ class Calendar extends React.Component<{}, CalendarState> {
         });
     }
 
-    onYearUpdate(e: any) {
+    private onYearUpdate(e: any) {
         if (e.target.value.length !== 4) {
             return;
         }
@@ -64,7 +64,7 @@ class Calendar extends React.Component<{}, CalendarState> {
         });
     }
 
-    prepareDaysForCurrentMonth() {
+    private prepareDaysForCurrentMonth() {
         let days = []
         for (let d = new Date(this.year, this.month, 1); d.getMonth() === this.month; d.setDate(d.getDate() + 1)) {
             days.push(new Date(d));
@@ -72,7 +72,7 @@ class Calendar extends React.Component<{}, CalendarState> {
         return days;
     }
 
-    generateImage() {
+    private generateImage() {
         toPng(this.elementRef.current as HTMLElement, { cacheBust: false })
             .then((dataUrl) => {
                 const link = document.createElement("a");
@@ -85,19 +85,19 @@ class Calendar extends React.Component<{}, CalendarState> {
             });
     }
 
-    generateHeader() {
+    private generateHeader() {
         return (<>
             {Calendar.DAYS.map(d => <div className={styles.dayCard} key={`${d}`}>{d}</div>)}
         </>)
     }
 
-    generatePreviousMonthEmptyCards() {
+    private generatePreviousMonthEmptyCards() {
         return (<>
             {[...Array(this.state.days[0].getDay())].map((x, i) => <EmptyCard key={i} />)}
         </>)
     }
 
-    generateCards() {
+    private generateCards() {
         return (<>
             {this.state.days.map(d => <Card key={`${d}`} date={d} />)}
         </>)
@@ -119,9 +119,7 @@ class Calendar extends React.Component<{}, CalendarState> {
                 </div>
                 <div className={styles.userPanel}>
                     <select className={styles.monthSelector} onChange={this.monthChange.bind(this)}>
-                        {Calendar.MONTHS.map((x, i) =>
-                            <option value={i} key={i}>{x}</option>
-                        )}
+                        {Calendar.MONTHS.map((x, i) => <option value={i} key={i}>{x}</option>)}
                     </select>
                     <input className={styles.generateButton} type='number' maxLength={4} placeholder='YYYY' min={1900} onChange={this.onYearUpdate.bind(this)} />
                     <button className={styles.generateButton} onClick={this.generateImage.bind(this)}>Generuj</button>

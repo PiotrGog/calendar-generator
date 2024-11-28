@@ -13,6 +13,7 @@
 }
 
 .cardLetter {
+    background-color: transparent;
     border: transparent solid 2px;
     font-size: 75px;
     margin: auto;
