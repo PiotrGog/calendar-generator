@@ -8,8 +8,13 @@ import Card from './Card';
 
 type CalendarProps = {}
 
+type CardData = {
+    date: Date,
+    text: string
+}
+
 type CalendarState = {
-    days: Date[],
+    days: CardData[],
     description: string,
     year: number,
     month: number
@@ -71,12 +76,16 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
     }
 
     private onYearUpdate(e: any) {
-        if (e.target.value.length !== 4) {
+        const val = +e.target.value;
+        if (Number.isNaN(val)) {
             return;
         }
         this.setState({
-            year: +e.target.value
+            year: val
         });
+        if (e.target.value.length !== 4) {
+            return;
+        }
         this.setState({
             days: this.prepareDaysForCurrentMonth()
         });
@@ -86,7 +95,7 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
         let days = []
         this.cardRefs = [];
         for (let d = new Date(this.state.year, this.state.month, 1); d.getMonth() === this.state.month; d.setDate(d.getDate() + 1)) {
-            days.push(new Date(d));
+            days.push({ date: new Date(d), text: "" });
             this.cardRefs.push(React.createRef<Card>());
         }
         return days;
@@ -116,13 +125,15 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             return <></>
         }
         return (<>
-            {[...Array(this.state.days[0].getDay())].map((x, i) => <EmptyCard key={i} />)}
+            {[...Array(this.state.days[0].date.getDay())].map((x, i) => <EmptyCard key={i} />)}
         </>)
     }
 
     private generateCards() {
         return (<>
-            {this.state.days.map((d, i) => <Card ref={this.cardRefs[i]} key={`${d}`} date={d} />)}
+            {this.state.days.map((card, i) => {
+                return <Card ref={this.cardRefs[i]} key={`${card.date}`} date={card.date} text={card.text} />
+            })}
         </>)
     }
 
@@ -135,10 +146,10 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
     private saveConfig() {
         const days = Object.fromEntries(this.cardRefs.map((cardRef, i) => [cardRef.current?.getDay(), cardRef.current?.getText()]));
         const config = {
-            "description": this.state.description,
-            "year": this.state.year,
-            "month": this.state.month + 1,
-            "days": days
+            description: this.state.description,
+            year: this.state.year,
+            month: this.state.month + 1,
+            days: days
         };
         const filePath = `${this.state.month + 1}_${this.state.year}_config.json`;
         const fileData = JSON.stringify(config, null, "  ");
@@ -148,6 +159,35 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
         link.download = filePath;
         link.href = dataUrlToSave;
         link.click();
+    }
+
+    private async loadConfiguration(e: any) {
+        const file = e.target.files[0];
+        const text = await file.text();
+        const config = JSON.parse(text);
+        const month = config.month - 1;
+        this.setState({
+            description: config.description,
+            year: config.year,
+            month: month,
+            days: []
+        });
+
+        let days = []
+        this.cardRefs = [];
+        for (let d = new Date(config.year, month, 1); d.getMonth() === month; d.setDate(d.getDate() + 1)) {
+            const a: CardData = {
+                date: new Date(d), text: config.days[d.getDate()]
+            }
+            days.push(a);
+            this.cardRefs.push(React.createRef<Card>());
+        }
+        this.setState({
+            description: config.description,
+            year: config.year,
+            month: month,
+            days: days
+        });
     }
 
     render() {
@@ -168,9 +208,13 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
                     <select className={styles.monthSelector} value={this.state.month} onChange={this.monthChange.bind(this)}>
                         {Calendar.MONTHS.map((x, i) => <option value={i} key={i}>{x}</option>)}
                     </select>
-                    <input className={styles.generateButton} type='number' maxLength={4} placeholder='YYYY' min={1900} value={this.state.year} onChange={this.onYearUpdate.bind(this)} />
+                    <input className={styles.generateButton} type='text' maxLength={4} placeholder='YYYY' value={this.state.year} onChange={this.onYearUpdate.bind(this)} />
                     <button className={styles.generateButton} onClick={this.generateImage.bind(this)}>Generuj</button>
                     <button className={styles.generateButton} onClick={this.saveConfig.bind(this)}>Zapisz</button>
+                    <div>
+                        <button className={styles.generateButton}><label htmlFor="file">Załaduj</label></button>
+                        <input type="file" name="file" id="file" accept='application/JSON' style={{ display: "none" }} onChange={this.loadConfiguration.bind(this)} />
+                    </div>
                 </div>
             </div>
         )

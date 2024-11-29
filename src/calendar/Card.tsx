@@ -3,7 +3,8 @@ import React from 'react';
 import styles from './Card.module.css';
 
 type CardProps = {
-    date: Date
+    date: Date,
+    text: string
 }
 
 type CardState = {
@@ -15,8 +16,14 @@ class Card extends React.Component<CardProps, CardState> {
         super(props);
 
         this.state = {
-            text: ""
+            text: this.props.text
         }
+    }
+
+    public componentDidMount() {
+        this.setState({
+            text: this.props.text
+        });
     }
 
     private setBackground() {
