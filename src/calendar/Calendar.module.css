@@ -47,3 +47,8 @@
 .monthSelector {
     font-size: 50px;
 }
+
+.loadSaveConfig {
+    display: none;
+    font-size: 50px;
+}
