@@ -14,7 +14,9 @@ type CardState = {
 
 class Card extends React.Component<CardProps, CardState> {
     private setBackground() {
-        if (this.props.date.getDay() === 0 || this.props.date.getDay() === 6) {
+        if (this.props.date.getDay() === 0
+            //  || this.props.date.getDay() === 6
+        ) {
             return { backgroundColor: '#CCC' }
         }
         return {}
