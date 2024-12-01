@@ -13,7 +13,8 @@ type CalendarState = {
     description: string,
     year: number,
     month: number,
-    headerFontSize: number
+    headerFontSize: number,
+    firstWeekDay: number,
 }
 
 class Calendar extends React.Component<CalendarProps, CalendarState> {
@@ -50,7 +51,8 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             description: "",
             month: 0,
             year: 2024,
-            headerFontSize: 30
+            headerFontSize: 30,
+            firstWeekDay: 1
         };
     }
 
@@ -84,15 +86,19 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
     }
 
     private generateHeader() {
+        let headerDays = [];
+        for (var i = 0; i < 7; i++) {
+            headerDays.push(Calendar.DAYS[((i + this.state.firstWeekDay) % 7)])
+        }
         return (<>
-            {Calendar.DAYS.map(d => <div className={styles.dayCard} style={{ fontSize: this.state.headerFontSize }} key={`${d}`}>{d}</div>)}
+            {headerDays.map(d => <div className={styles.dayCard} style={{ fontSize: this.state.headerFontSize }} key={`${d}`}>{d}</div>)}
         </>)
     }
 
     private generatePreviousMonthEmptyCards() {
         const firstDayOfMonth = new Date(this.state.year, this.state.month, 1);
         return (<>
-            {[...Array(firstDayOfMonth.getDay())].map((x, i) => <EmptyCard key={i} />)}
+            {[...Array(firstDayOfMonth.getDay() + 7 - this.state.firstWeekDay)].map((x, i) => <EmptyCard key={i} />)}
         </>)
     }
 
@@ -126,7 +132,8 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             year: this.state.year,
             month: this.state.month + 1,
             days: this.state.days,
-            headerFontSize: this.state.headerFontSize
+            headerFontSize: this.state.headerFontSize,
+            firstWeekDay: this.state.firstWeekDay,
         };
         const filePath = `${this.state.month + 1}_${this.state.year}_config.json`;
         const fileData = JSON.stringify(config, null, "  ");
@@ -148,7 +155,8 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             year: config.year,
             month: month,
             days: config.days,
-            headerFontSize: config.headerFontSize
+            headerFontSize: config.headerFontSize,
+            firstWeekDay: config.firstWeekDay
         });
     }
 
@@ -182,6 +190,12 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
                     <div className={styles.basicPanel}>
                         <label htmlFor="file">Naglówek: </label>
                         <input type="number" id="file" value={this.state.headerFontSize} onChange={e => this.setState({ headerFontSize: +e.currentTarget.value })} />
+                    </div>
+                    <div className={styles.basicPanel}>
+                        <label htmlFor="file">Pierwszy dzień: </label>
+                        <select value={this.state.firstWeekDay} onChange={e => this.setState({ firstWeekDay: +e.currentTarget.value })}>
+                            {Calendar.DAYS.map((x, i) => <option value={i} key={i}>{x}</option>)}
+                        </select>
                     </div>
                 </div>
             </div>
