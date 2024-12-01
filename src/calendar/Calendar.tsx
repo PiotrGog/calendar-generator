@@ -12,7 +12,8 @@ type CalendarState = {
     days: { [day: number]: string },
     description: string,
     year: number,
-    month: number
+    month: number,
+    headerFontSize: number
 }
 
 class Calendar extends React.Component<CalendarProps, CalendarState> {
@@ -48,9 +49,9 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             days: {},
             description: "",
             month: 0,
-            year: 2024
+            year: 2024,
+            headerFontSize: 30
         };
-
     }
 
     private monthChange(e: any) {
@@ -84,7 +85,7 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
 
     private generateHeader() {
         return (<>
-            {Calendar.DAYS.map(d => <div className={styles.dayCard} key={`${d}`}>{d}</div>)}
+            {Calendar.DAYS.map(d => <div className={styles.dayCard} style={{ fontSize: this.state.headerFontSize }} key={`${d}`}>{d}</div>)}
         </>)
     }
 
@@ -124,7 +125,8 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             description: this.state.description,
             year: this.state.year,
             month: this.state.month + 1,
-            days: this.state.days
+            days: this.state.days,
+            headerFontSize: this.state.headerFontSize
         };
         const filePath = `${this.state.month + 1}_${this.state.year}_config.json`;
         const fileData = JSON.stringify(config, null, "  ");
@@ -145,7 +147,8 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             description: config.description,
             year: config.year,
             month: month,
-            days: config.days
+            days: config.days,
+            headerFontSize: config.headerFontSize
         });
     }
 
@@ -164,15 +167,21 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
                     </div>
                 </div>
                 <div className={styles.userPanel}>
-                    <select className={styles.monthSelector} value={this.state.month} onChange={this.monthChange.bind(this)}>
-                        {Calendar.MONTHS.map((x, i) => <option value={i} key={i}>{x}</option>)}
-                    </select>
-                    <input className={styles.generateButton} type='text' maxLength={4} placeholder='YYYY' value={this.state.year} onChange={this.onYearUpdate.bind(this)} />
-                    <button className={styles.generateButton} onClick={this.generateImage.bind(this)}>Generuj</button>
-                    <button className={styles.generateButton} onClick={this.saveConfig.bind(this)}>Zapisz</button>
-                    <div>
-                        <button className={styles.generateButton}><label htmlFor="file">Załaduj</label></button>
-                        <input type="file" name="file" id="file" accept='application/JSON' style={{ display: "none" }} onChange={this.loadConfiguration.bind(this)} />
+                    <div className={styles.basicPanel}>
+                        <select className={styles.monthSelector} value={this.state.month} onChange={this.monthChange.bind(this)}>
+                            {Calendar.MONTHS.map((x, i) => <option value={i} key={i}>{x}</option>)}
+                        </select>
+                        <input className={styles.generateButton} type='text' maxLength={4} placeholder='YYYY' value={this.state.year} onChange={this.onYearUpdate.bind(this)} />
+                        <button className={styles.generateButton} onClick={this.generateImage.bind(this)}>Generuj</button>
+                        <button className={styles.generateButton} onClick={this.saveConfig.bind(this)}>Zapisz</button>
+                        <div>
+                            <button className={styles.generateButton}><label htmlFor="file">Załaduj</label></button>
+                            <input type="file" id="file" accept='application/JSON' style={{ display: "none" }} onChange={this.loadConfiguration.bind(this)} />
+                        </div>
+                    </div>
+                    <div className={styles.basicPanel}>
+                        <label htmlFor="file">Naglówek: </label>
+                        <input type="number" id="file" value={this.state.headerFontSize} onChange={e => this.setState({ headerFontSize: +e.currentTarget.value })} />
                     </div>
                 </div>
             </div>
