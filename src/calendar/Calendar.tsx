@@ -8,13 +8,8 @@ import Card from './Card';
 
 type CalendarProps = {}
 
-type CardData = {
-    date: Date,
-    text: string
-}
-
 type CalendarState = {
-    days: CardData[],
+    days: { [day: number]: string },
     description: string,
     year: number,
     month: number
@@ -46,12 +41,11 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
     ];
 
     private calendarMainRef = React.createRef<HTMLDivElement>();
-    private cardRefs: React.RefObject<Card>[] = [];
 
     public constructor(props: CalendarProps) {
         super(props);
         this.state = {
-            days: [],
+            days: {},
             description: "",
             month: 0,
             year: 2024
@@ -59,19 +53,9 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
 
     }
 
-    public componentDidMount() {
-        this.setState({
-            days: this.prepareDaysForCurrentMonth()
-        });
-    }
-
     private monthChange(e: any) {
         this.setState({
             month: +e.target.value
-        });
-
-        this.setState({
-            days: this.prepareDaysForCurrentMonth()
         });
     }
 
@@ -83,22 +67,6 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
         this.setState({
             year: val
         });
-        if (e.target.value.length !== 4) {
-            return;
-        }
-        this.setState({
-            days: this.prepareDaysForCurrentMonth()
-        });
-    }
-
-    private prepareDaysForCurrentMonth() {
-        let days = []
-        this.cardRefs = [];
-        for (let d = new Date(this.state.year, this.state.month, 1); d.getMonth() === this.state.month; d.setDate(d.getDate() + 1)) {
-            days.push({ date: new Date(d), text: "" });
-            this.cardRefs.push(React.createRef<Card>());
-        }
-        return days;
     }
 
     private generateImage() {
@@ -121,18 +89,26 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
     }
 
     private generatePreviousMonthEmptyCards() {
-        if (this.state.days.length === 0) {
-            return <></>
-        }
+        const firstDayOfMonth = new Date(this.state.year, this.state.month, 1);
         return (<>
-            {[...Array(this.state.days[0].date.getDay())].map((x, i) => <EmptyCard key={i} />)}
+            {[...Array(firstDayOfMonth.getDay())].map((x, i) => <EmptyCard key={i} />)}
         </>)
     }
 
+    private onCardTextChange(day: number, val: string) {
+        const newDays = this.state.days;
+        newDays[day] = val;
+        this.setState({ days: newDays });
+    }
+
     private generateCards() {
+        let days = []
+        for (let d = new Date(this.state.year, this.state.month, 1); d.getMonth() === this.state.month; d.setDate(d.getDate() + 1)) {
+            days.push(new Date(d));
+        }
         return (<>
-            {this.state.days.map((card, i) => {
-                return <Card ref={this.cardRefs[i]} key={`${card.date}`} date={card.date} text={card.text} />
+            {days.map(date => {
+                return <Card key={`${date}`} date={date} text={this.state.days[date.getDate()]} onTextChange={this.onCardTextChange.bind(this)} />
             })}
         </>)
     }
@@ -144,12 +120,11 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
     }
 
     private saveConfig() {
-        const days = Object.fromEntries(this.cardRefs.map((cardRef, i) => [cardRef.current?.getDay(), cardRef.current?.getText()]));
         const config = {
             description: this.state.description,
             year: this.state.year,
             month: this.state.month + 1,
-            days: days
+            days: this.state.days
         };
         const filePath = `${this.state.month + 1}_${this.state.year}_config.json`;
         const fileData = JSON.stringify(config, null, "  ");
@@ -170,23 +145,7 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             description: config.description,
             year: config.year,
             month: month,
-            days: []
-        });
-
-        let days = []
-        this.cardRefs = [];
-        for (let d = new Date(config.year, month, 1); d.getMonth() === month; d.setDate(d.getDate() + 1)) {
-            const a: CardData = {
-                date: new Date(d), text: config.days[d.getDate()]
-            }
-            days.push(a);
-            this.cardRefs.push(React.createRef<Card>());
-        }
-        this.setState({
-            description: config.description,
-            year: config.year,
-            month: month,
-            days: days
+            days: config.days
         });
     }
 

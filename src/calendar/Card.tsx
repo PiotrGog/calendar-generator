@@ -4,7 +4,8 @@ import styles from './Card.module.css';
 
 type CardProps = {
     date: Date,
-    text: string
+    text: string,
+    onTextChange: (day: number, val: string) => void
 }
 
 type CardState = {
@@ -12,20 +13,6 @@ type CardState = {
 }
 
 class Card extends React.Component<CardProps, CardState> {
-    public constructor(props: CardProps) {
-        super(props);
-
-        this.state = {
-            text: this.props.text
-        }
-    }
-
-    public componentDidMount() {
-        this.setState({
-            text: this.props.text
-        });
-    }
-
     private setBackground() {
         if (this.props.date.getDay() === 0 || this.props.date.getDay() === 6) {
             return { backgroundColor: '#CCC' }
@@ -34,17 +21,7 @@ class Card extends React.Component<CardProps, CardState> {
     }
 
     private onTextChanged(e: any) {
-        this.setState({
-            text: e.target.value
-        });
-    }
-
-    public getText() {
-        return this.state.text;
-    }
-
-    public getDay() {
-        return this.props.date.getDate();
+        this.props.onTextChange(this.props.date.getDate(), e.target.value);
     }
 
     render() {
@@ -53,7 +30,7 @@ class Card extends React.Component<CardProps, CardState> {
                 <div className={styles.cardDate}>
                     {this.props.date.getDate()}
                 </div>
-                <input className={styles.cardLetter} type='text' maxLength={1} value={this.state.text} onChange={this.onTextChanged.bind(this)} />
+                <input className={styles.cardLetter} type='text' maxLength={1} value={this.props.text} onChange={this.onTextChanged.bind(this)} />
             </div>
         )
     }
