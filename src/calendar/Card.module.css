@@ -1,8 +1,7 @@
 .cardContainer {
     border: rgb(0, 0, 0) 2px solid;
     display: flex;
-    flex-direction: column;
-    row-gap: 5px;
+    flex-direction: row;
 }
 
 .cardDate {
@@ -15,11 +14,11 @@
 .cardLetter {
     background-color: transparent;
     border: transparent solid 2px;
-    font-size: 75px;
+    font-size: 150px;
     margin: auto;
     text-align: center;
     text-transform: capitalize;
-    width: 50%;
+    width: 100%;
 }
 
 .cardLetter:hover {

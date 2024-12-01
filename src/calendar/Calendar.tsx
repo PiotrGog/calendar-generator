@@ -15,6 +15,8 @@ type CalendarState = {
     month: number,
     headerFontSize: number,
     firstWeekDay: number,
+    cardDayFontSize: number,
+    cardTextFontSize: number,
 }
 
 class Calendar extends React.Component<CalendarProps, CalendarState> {
@@ -52,13 +54,16 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             month: 0,
             year: 2024,
             headerFontSize: 30,
-            firstWeekDay: 1
+            firstWeekDay: 1,
+            cardDayFontSize: 20,
+            cardTextFontSize: 150,
         };
     }
 
     private monthChange(e: any) {
         this.setState({
-            month: +e.target.value
+            month: +e.target.value,
+            days: {}
         });
     }
 
@@ -68,7 +73,8 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             return;
         }
         this.setState({
-            year: val
+            year: val,
+            days: {}
         });
     }
 
@@ -115,7 +121,13 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
         }
         return (<>
             {days.map(date => {
-                return <Card key={`${date}`} date={date} text={this.state.days[date.getDate()]} onTextChange={this.onCardTextChange.bind(this)} />
+                return <Card
+                    key={`${date}`}
+                    date={date}
+                    text={this.state.days[date.getDate()]}
+                    dateFontSize={this.state.cardDayFontSize}
+                    textFontSize={this.state.cardTextFontSize}
+                    onTextChange={this.onCardTextChange.bind(this)} />
             })}
         </>)
     }
@@ -134,6 +146,8 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             days: this.state.days,
             headerFontSize: this.state.headerFontSize,
             firstWeekDay: this.state.firstWeekDay,
+            cardDayFontSize: this.state.cardDayFontSize,
+            cardTextFontSize: this.state.cardTextFontSize,
         };
         const filePath = `${this.state.month + 1}_${this.state.year}_config.json`;
         const fileData = JSON.stringify(config, null, "  ");
@@ -156,7 +170,9 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
             month: month,
             days: config.days,
             headerFontSize: config.headerFontSize,
-            firstWeekDay: config.firstWeekDay
+            firstWeekDay: config.firstWeekDay,
+            cardDayFontSize: config.cardDayFontSize,
+            cardTextFontSize: config.cardTextFontSize,
         });
     }
 
@@ -166,7 +182,13 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
                 <div ref={this.calendarMainRef} className={styles.calendarMain}>
                     <div className={styles.calendarHeader}>
                         <div>{Calendar.MONTHS[this.state.month]}</div>
-                        <textarea className={styles.textareaLegend} cols={50} rows={4} value={this.state.description} onChange={this.onDescriptionChange.bind(this)}></textarea>
+                        <textarea
+                            className={styles.textareaLegend}
+                            cols={50}
+                            rows={4}
+                            value={this.state.description}
+                            onChange={this.onDescriptionChange.bind(this)}
+                        />
                     </div>
                     <div className={styles.calendarContainer}>
                         {this.generateHeader()}
@@ -176,26 +198,74 @@ class Calendar extends React.Component<CalendarProps, CalendarState> {
                 </div>
                 <div className={styles.userPanel}>
                     <div className={styles.basicPanel}>
-                        <select className={styles.monthSelector} value={this.state.month} onChange={this.monthChange.bind(this)}>
+                        <select
+                            className={styles.monthSelector}
+                            value={this.state.month}
+                            onChange={this.monthChange.bind(this)}
+                        >
                             {Calendar.MONTHS.map((x, i) => <option value={i} key={i}>{x}</option>)}
                         </select>
-                        <input className={styles.generateButton} type='text' maxLength={4} placeholder='YYYY' value={this.state.year} onChange={this.onYearUpdate.bind(this)} />
+                        <input
+                            className={styles.generateButton}
+                            type='text'
+                            maxLength={4}
+                            placeholder='YYYY'
+                            value={this.state.year}
+                            onChange={this.onYearUpdate.bind(this)}
+                        />
                         <button className={styles.generateButton} onClick={this.generateImage.bind(this)}>Generuj</button>
                         <button className={styles.generateButton} onClick={this.saveConfig.bind(this)}>Zapisz</button>
                         <div>
                             <button className={styles.generateButton}><label htmlFor="file">Załaduj</label></button>
-                            <input type="file" id="file" accept='application/JSON' style={{ display: "none" }} onChange={this.loadConfiguration.bind(this)} />
+                            <input
+                                type="file"
+                                id="file"
+                                accept='application/JSON'
+                                style={{ display: "none" }}
+                                onChange={this.loadConfiguration.bind(this)}
+                            />
                         </div>
                     </div>
                     <div className={styles.basicPanel}>
                         <label htmlFor="file">Naglówek: </label>
-                        <input type="number" id="file" value={this.state.headerFontSize} onChange={e => this.setState({ headerFontSize: +e.currentTarget.value })} />
+                        <input
+                            type="number"
+                            id="file"
+                            value={this.state.headerFontSize}
+                            onChange={e => this.setState({ headerFontSize: +e.currentTarget.value })}
+                            style={{ fontSize: "50px" }}
+                        />
                     </div>
                     <div className={styles.basicPanel}>
-                        <label htmlFor="file">Pierwszy dzień: </label>
-                        <select value={this.state.firstWeekDay} onChange={e => this.setState({ firstWeekDay: +e.currentTarget.value })}>
+                        <label htmlFor="firstWeekDay">Pierwszy dzień: </label>
+                        <select
+                            id='firstWeekDay'
+                            value={this.state.firstWeekDay}
+                            onChange={e => this.setState({ firstWeekDay: +e.currentTarget.value })}
+                            style={{ fontSize: "50px" }}
+                        >
                             {Calendar.DAYS.map((x, i) => <option value={i} key={i}>{x}</option>)}
                         </select>
+                    </div>
+                    <div className={styles.basicPanel}>
+                        <label htmlFor="dateFontSize">Data: </label>
+                        <input
+                            type="number"
+                            id="dateFontSize"
+                            value={this.state.cardDayFontSize}
+                            onChange={e => this.setState({ cardDayFontSize: +e.currentTarget.value })}
+                            style={{ fontSize: "50px" }}
+                        />
+                    </div>
+                    <div className={styles.basicPanel}>
+                        <label htmlFor="textFontSize">Tekst: </label>
+                        <input
+                            type="number"
+                            id="textFontSize"
+                            value={this.state.cardTextFontSize}
+                            onChange={e => this.setState({ cardTextFontSize: +e.currentTarget.value })}
+                            style={{ fontSize: "50px" }}
+                        />
                     </div>
                 </div>
             </div>

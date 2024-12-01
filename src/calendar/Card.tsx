@@ -5,6 +5,8 @@ import styles from './Card.module.css';
 type CardProps = {
     date: Date,
     text: string,
+    dateFontSize: number,
+    textFontSize: number,
     onTextChange: (day: number, val: string) => void
 }
 
@@ -29,10 +31,17 @@ class Card extends React.Component<CardProps, CardState> {
     render() {
         return (
             <div style={this.setBackground()} className={styles.cardContainer}>
-                <div className={styles.cardDate}>
+                <div className={styles.cardDate} style={{ fontSize: this.props.dateFontSize }}>
                     {this.props.date.getDate()}
                 </div>
-                <input className={styles.cardLetter} type='text' maxLength={1} value={this.props.text} onChange={this.onTextChanged.bind(this)} />
+                <input
+                    className={styles.cardLetter}
+                    style={{ fontSize: this.props.textFontSize }}
+                    type='text'
+                    maxLength={1}
+                    value={this.props.text}
+                    onChange={this.onTextChanged.bind(this)}
+                />
             </div>
         )
     }
